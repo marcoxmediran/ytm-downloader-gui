@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'downloader.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final TextEditingController _linkController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -10,13 +19,11 @@ class Home extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            child: const Icon(Icons.paste),
-            onPressed: () {},
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
             child: const Icon(Icons.download_outlined),
-            onPressed: () {},
+            onPressed: () async {
+              //Downloader.downloadStream(_linkController.text);
+              Downloader.playground(_linkController.text);
+            },
           ),
         ],
       ),
@@ -37,12 +44,19 @@ class Home extends StatelessWidget {
               child: Column(
                 children: [
                   Form(
-                      child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text('Music Link'),
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _linkController,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        label: const Text('Music Link'),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => _linkController.text = '',
+                        ),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
