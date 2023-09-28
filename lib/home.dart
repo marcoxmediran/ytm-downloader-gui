@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'downloader.dart';
+import 'package:ytm_downloader_gui/downloader.dart';
+import 'form.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,8 +22,12 @@ class _HomeState extends State<Home> {
           FloatingActionButton(
             child: const Icon(Icons.download_outlined),
             onPressed: () async {
-              //Downloader.downloadStream(_linkController.text);
-              Downloader.playground(_linkController.text);
+              if (Downloader.isValidLink(context, _linkController.text)) {
+                String id = Downloader.getId(_linkController.text);
+                SongMetadata metadata = await Downloader.getMetadata(id);
+                if (!context.mounted) return;
+                showDownloadForm(context, id, metadata);
+              }
             },
           ),
         ],
