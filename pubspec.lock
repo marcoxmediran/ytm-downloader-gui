@@ -131,6 +131,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  id3_codec:
+    dependency: "direct main"
+    description:
+      name: id3_codec
+      sha256: "8b1c803c22b6f4193b8d36132101c3b196323102141f0995204ca74194ee2854"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   json_annotation:
     dependency: transitive
     description:

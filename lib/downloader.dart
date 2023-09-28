@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-//import 'package:audiotags/audiotags.dart';
+import 'metadata.dart';
 
 class Downloader {
   static bool isValidLink(BuildContext context, String link) {
@@ -54,19 +54,8 @@ class Downloader {
 
     // Close YouTubeExplode's http client
     yt.close();
+
+    // Write metadata
+    MetadataWriter.writeMetadata(metadata, id, downloadPath);
   }
-}
-
-class SongMetadata {
-  final String title;
-  final String artist;
-  final String album;
-  final String date;
-
-  const SongMetadata({
-    required this.title,
-    required this.artist,
-    required this.album,
-    required this.date,
-  });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ytm_downloader_gui/downloader.dart';
 import 'form.dart';
+import 'metadata.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

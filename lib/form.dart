@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'downloader.dart';
+import 'metadata.dart';
 
 Future<dynamic> showDownloadForm(
     BuildContext context, String id, SongMetadata metadata) {
@@ -10,6 +11,7 @@ Future<dynamic> showDownloadForm(
   final TextEditingController downloadPathController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   const formGaps = 16.0;
+  const downloadPath = '/storage/emulated/0/Music';
   return showModalBottomSheet(
     useSafeArea: true,
     isScrollControlled: true,
@@ -19,7 +21,7 @@ Future<dynamic> showDownloadForm(
       songArtistController.text = metadata.artist;
       songAlbumController.text = metadata.album;
       songDateController.text = metadata.date;
-      downloadPathController.text = '/storage/emulated/0/Music';
+      downloadPathController.text = downloadPath;
       return SingleChildScrollView(
         padding: EdgeInsets.only(
           left: 24.0,
