@@ -20,7 +20,7 @@ Future<dynamic> showDownloadForm(
       songTitleController.text = metadata.title;
       songArtistController.text = metadata.artist;
       songAlbumController.text = metadata.album;
-      songDateController.text = metadata.date;
+      songDateController.text = metadata.year;
       downloadPathController.text = downloadPath;
       return SingleChildScrollView(
         padding: EdgeInsets.only(

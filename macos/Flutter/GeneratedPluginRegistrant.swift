@@ -5,10 +5,12 @@
 import FlutterMacOS
 import Foundation
 
+import audiotags
 import dynamic_color
-import path_provider_foundation
+import ffmpeg_kit_flutter_audio
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  AudiotagsPlugin.register(with: registry.registrar(forPlugin: "AudiotagsPlugin"))
   DynamicColorPlugin.register(with: registry.registrar(forPlugin: "DynamicColorPlugin"))
-  PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
+  FFmpegKitFlutterPlugin.register(with: registry.registrar(forPlugin: "FFmpegKitFlutterPlugin"))
 }
