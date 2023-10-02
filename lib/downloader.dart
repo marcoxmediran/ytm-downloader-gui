@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'metadata.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'metadata.dart';
 
 class Downloader {
   static bool isValidLink(BuildContext context, String link) {
@@ -33,22 +33,14 @@ class Downloader {
       title: description[2].split(' · ')[0],
       artist: description[2].split(' · ')[1],
       album: description[4],
-      year: description[8].substring(13, 17),
+      year: '${song.publishDate}'.substring(0, 4),
     );
     return metadata;
-  }
-
-  static void deleteTempFiles(String downloadPath) {
-    final webmFile = File('$downloadPath/temp.webm');
-    final mp3File = File('$downloadPath/temp.mp3');
-    webmFile.delete();
-    mp3File.delete();
   }
 
   static Future<void> downloadSong(
       String id, SongMetadata metadata, String downloadPath) async {
     // Check permissions
-    await Permission.audio.request().isGranted;
     await Permission.manageExternalStorage.request().isGranted;
 
     // Get audio stream
@@ -65,10 +57,9 @@ class Downloader {
     await fileStream.close();
 
     // Close YouTubeExplode's http client
-    print('download finished');
     yt.close();
 
     //MetadataWriter.convertToMp3(downloadPath);
-    MetadataWriter.writeMetadata(metadata, downloadPath);
+    MetadataWriter.writeMetadata(metadata, id, downloadPath);
   }
 }
