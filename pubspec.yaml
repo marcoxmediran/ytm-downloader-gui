@@ -41,6 +41,7 @@ dependencies:
   ffmpeg_kit_flutter_audio: ^6.0.3
   http: ^1.1.0
   audiotags: ^1.2.1
+  media_scanner: ^2.1.0
 
 dev_dependencies:
   flutter_test:

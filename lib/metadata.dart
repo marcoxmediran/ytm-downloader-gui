@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter_audio/ffmpeg_kit.dart';
 import 'package:audiotags/audiotags.dart';
 import 'package:http/http.dart' as http;
+import 'package:media_scanner/media_scanner.dart';
 
 class MetadataWriter {
   static void writeMetadata(
@@ -14,11 +15,8 @@ class MetadataWriter {
       // Download album art
       String albumArtLink = 'https://i.ytimg.com/vi/$id/maxresdefault.jpg';
       final http.Response response = await http.get(Uri.parse(albumArtLink));
-      //final albumArt = File('$downloadPath/cover.jpg');
-      //await albumArt.writeAsBytes(response.bodyBytes);
 
       var tempWebm = File('$downloadPath/temp.webm');
-      //var tempCover = File('$downloadPath/cover.jpg');
 
       // Write Metadata
       Tag tag = Tag(
@@ -34,10 +32,10 @@ class MetadataWriter {
           ]);
 
       AudioTags.write('$downloadPath/${metadata.title}.mp3', tag);
+      MediaScanner.loadMedia(path: downloadPath);
 
       // Clean up
       await tempWebm.delete();
-      //await tempCover.delete();
     });
   }
 }
