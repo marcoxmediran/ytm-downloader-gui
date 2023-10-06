@@ -21,22 +21,6 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            child: const Icon(Icons.paste),
-            onPressed: () {
-              _linkController.text =
-                  "https://music.youtube.com/watch?v=lqVBI7iCnog&list=RDAMVMlqVBI7iCnog";
-            },
-          ),
-          const SizedBox(height: 16.0),
-          FloatingActionButton(
-            child: const Icon(Icons.paste),
-            onPressed: () {
-              _linkController.text =
-                  "https://music.youtube.com/watch?v=oHb8VUjaj-U&feature=share";
-            },
-          ),
-          const SizedBox(height: 16.0),
-          FloatingActionButton(
             child: const Icon(Icons.download_outlined),
             onPressed: () async {
               if (Downloader.isValidLink(context, _linkController.text)) {
