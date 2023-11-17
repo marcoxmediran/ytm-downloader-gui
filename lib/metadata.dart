@@ -21,7 +21,7 @@ class MetadataWriter {
       // Write Metadata
       Tag tag = Tag(
           title: metadata.title,
-          artist: metadata.artist,
+          trackArtist: metadata.artist,
           album: metadata.album,
           year: int.parse(metadata.year),
           pictures: [
