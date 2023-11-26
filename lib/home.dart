@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   Form(

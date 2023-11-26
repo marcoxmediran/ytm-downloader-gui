@@ -39,6 +39,7 @@ dependencies:
   http: ^1.1.0
   audiotags: ^1.2.1
   media_scanner: ^2.1.0
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

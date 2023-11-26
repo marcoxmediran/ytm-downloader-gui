@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:media_scanner/media_scanner.dart';
 
 class MetadataWriter {
-  static void writeMetadata(
-      SongMetadata metadata, String id, String downloadPath) {
+  static writeMetadata(
+      SongMetadata metadata, String id, String downloadPath, String tempDir) {
     // Convert webm to mp3
-    var command = '-i "$downloadPath/temp.webm" ';
+    var command = '-i "$tempDir/temp.webm" ';
     command += '-vn -acodec libmp3lame -ab 192k ';
     command += '-y "$downloadPath/${metadata.title}.mp3"';
     FFmpegKit.execute(command).then((value) async {
@@ -16,7 +16,7 @@ class MetadataWriter {
       String albumArtLink = 'https://i.ytimg.com/vi/$id/maxresdefault.jpg';
       final http.Response response = await http.get(Uri.parse(albumArtLink));
 
-      var tempWebm = File('$downloadPath/temp.webm');
+      var tempWebm = File('$tempDir/temp.webm');
 
       // Write Metadata
       Tag tag = Tag(

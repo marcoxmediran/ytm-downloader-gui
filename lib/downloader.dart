@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 import 'metadata.dart';
 
 class Downloader {
@@ -40,8 +41,9 @@ class Downloader {
 
   static Future<void> downloadSong(
       String id, SongMetadata metadata, String downloadPath) async {
-    // Check permissions
+    // Check permissions and get temp path
     await Permission.manageExternalStorage.request().isGranted;
+    Directory tempDir = await getTemporaryDirectory();
 
     // Get audio stream
     final yt = YoutubeExplode();
@@ -50,7 +52,7 @@ class Downloader {
 
     // Download file
     var stream = yt.videos.streamsClient.get(streamInfo);
-    var file = File('$downloadPath/temp.webm');
+    var file = File('${tempDir.path}/temp.webm');
     var fileStream = file.openWrite();
     await stream.pipe(fileStream);
     await fileStream.flush();
@@ -60,6 +62,6 @@ class Downloader {
     yt.close();
 
     //MetadataWriter.convertToMp3(downloadPath);
-    MetadataWriter.writeMetadata(metadata, id, downloadPath);
+    MetadataWriter.writeMetadata(metadata, id, downloadPath, tempDir.path);
   }
 }
