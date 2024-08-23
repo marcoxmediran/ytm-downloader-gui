@@ -40,6 +40,8 @@ dependencies:
   audiotags: ^1.2.1
   media_scanner: ^2.1.0
   path_provider: ^2.1.1
+  image: ^4.2.0
+  flutter_sharing_intent: ^1.1.1
 
 dev_dependencies:
   flutter_test:

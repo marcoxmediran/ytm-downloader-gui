@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'ytm_downloader_gui',
           theme: ThemeData(
             colorScheme: lightDynamic ??

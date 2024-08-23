@@ -20,7 +20,7 @@ Future<dynamic> showDownloadForm(
       songTitleController.text = metadata.title;
       songArtistController.text = metadata.artist;
       songAlbumController.text = metadata.album;
-      songDateController.text = metadata.year;
+      songDateController.text = metadata.year.toString();
       downloadPathController.text = downloadPath;
       return SingleChildScrollView(
         padding: EdgeInsets.only(
@@ -96,8 +96,6 @@ Future<dynamic> showDownloadForm(
               const SizedBox(height: formGaps),
               ElevatedButton(
                 onPressed: () async {
-                  await Downloader.downloadSong(
-                      id, metadata, downloadPathController.text);
                   if (!context.mounted) return;
                   Navigator.of(context).pop();
                 },
