@@ -27,7 +27,6 @@ class MetadataWriter {
           pictures: [
             Picture(
                 bytes: response.bodyBytes,
-                mimeType: MimeType.none,
                 pictureType: PictureType.other),
           ]);
 
