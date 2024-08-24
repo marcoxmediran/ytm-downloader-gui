@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:ytm_downloader_gui/downloader.dart';
