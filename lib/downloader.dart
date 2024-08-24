@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audiotags/audiotags.dart';
+import 'package:ffmpeg_kit_flutter_audio/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:media_scanner/media_scanner.dart';
@@ -31,24 +32,12 @@ class Downloader {
     // Check permissions and get temp path
     await Permission.manageExternalStorage.request().isGranted;
     Directory tempDir = await getTemporaryDirectory();
+    var tempPath = tempDir.path;
     const downloadPath = '/storage/emulated/0/Music';
 
     // Get audio details
     final yt = YoutubeExplode();
     final song = await yt.videos.get(id);
-
-    // Download file
-    final manifest = await yt.videos.streamsClient.getManifest(id);
-    StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
-    var stream = yt.videos.streamsClient.get(streamInfo);
-    var tempWebm = File('${tempDir.path}/temp.webm');
-    var fileStream = tempWebm.openWrite();
-    await stream.pipe(fileStream);
-    await fileStream.flush();
-    await fileStream.close();
-
-    // Close YouTubeExplode's http client
-    yt.close();
 
     // Get album art
     final thumbnailUrl = song.thumbnails.maxResUrl;
@@ -63,23 +52,38 @@ class Downloader {
       height: 720,
     );
 
+    // Generate audio tags
+    Tag tag = Tag(
+      title: song.title,
+      trackArtist: song.author.substring(0, song.author.length - 8),
+      album: splitDescription(song.description)[4],
+      year: song.publishDate!.year,
+      pictures: [
+        Picture(
+          pictureType: PictureType.coverFront,
+          bytes: Uint8List.fromList(encodePng(albumArt)),
+        ),
+      ],
+    );
+
+    // Download file
+    final manifest = await yt.videos.streamsClient.getManifest(id);
+    StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
+    var stream = yt.videos.streamsClient.get(streamInfo);
+    var tempWebm = File('$tempPath/${song.title}.webm');
+    var fileStream = tempWebm.openWrite();
+    await stream.pipe(fileStream);
+    await fileStream.flush();
+    await fileStream.close();
+
+    // Close YouTubeExplode's http client
+    yt.close();
+
     // Convert webm to mp3
     var command =
-        '-i "${tempDir.path}/temp.webm" "$downloadPath/${song.title}.mp3"';
+        '-i "$tempPath/${song.title}.webm" -c:a libmp3lame -b:a 128k "$downloadPath/${song.title}.mp3"';
     FFmpegKit.execute(command).then((session) async {
       // Apply audio tags
-      Tag tag = Tag(
-        title: song.title,
-        trackArtist: song.author.substring(0, song.author.length - 8),
-        album: splitDescription(song.description)[4],
-        year: song.publishDate!.year,
-        pictures: [
-          Picture(
-            pictureType: PictureType.coverFront,
-            bytes: Uint8List.fromList(encodePng(albumArt)),
-          ),
-        ],
-      );
       AudioTags.write('$downloadPath/${song.title}.mp3', tag);
 
       // Refresh storage media
