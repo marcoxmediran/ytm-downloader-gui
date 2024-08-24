@@ -35,8 +35,10 @@ class _HomeState extends State<Home> {
         .listen((List<SharedFile> value) {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(',');
-        _linkController.text = link;
-        Downloader.download(Downloader.getId(link));
+        if (Downloader.isValidLink(link)) {
+          _linkController.text = link;
+          Downloader.download(Downloader.getId(link));
+        }
       }
     });
 
@@ -45,8 +47,10 @@ class _HomeState extends State<Home> {
         .then((List<SharedFile> value) {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(",");
-        _linkController.text = link;
-        Downloader.download(Downloader.getId(link));
+        if (Downloader.isValidLink(link)) {
+          _linkController.text = link;
+          Downloader.download(Downloader.getId(link));
+        }
       }
     });
   }
@@ -61,7 +65,7 @@ class _HomeState extends State<Home> {
             child: const Icon(Icons.download_outlined),
             onPressed: () async {
               String link = _linkController.text;
-              if (Downloader.isValidLink(context, link)) {
+              if (Downloader.isValidLink(link)) {
                 String id = Downloader.getId(link);
                 if (!context.mounted) return;
                 Downloader.download(id);

@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audiotags/audiotags.dart';
-import 'package:ffmpeg_kit_flutter_audio/return_code.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:media_scanner/media_scanner.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -14,7 +12,7 @@ import 'package:ffmpeg_kit_flutter_audio/ffmpeg_kit.dart';
 import 'package:image/image.dart';
 
 class Downloader {
-  static bool isValidLink(BuildContext context, String link) {
+  static bool isValidLink(String link) {
     return link.contains('music.youtube.com/watch?v=');
   }
 
