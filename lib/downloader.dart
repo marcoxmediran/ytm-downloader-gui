@@ -35,10 +35,10 @@ class Downloader {
 
     // Get audio details
     final yt = YoutubeExplode();
-    final song = await yt.videos.get(id);
+    final music = await yt.videos.get(id);
 
     // Get album art
-    final thumbnailUrl = song.thumbnails.maxResUrl;
+    final thumbnailUrl = music.thumbnails.maxResUrl;
     final http.Response response = await http.get(Uri.parse(thumbnailUrl));
     final originalImage = response.bodyBytes;
     final decodedImage = decodeImage(originalImage);
@@ -52,10 +52,10 @@ class Downloader {
 
     // Generate audio tags
     Tag tag = Tag(
-      title: song.title,
-      trackArtist: song.author.substring(0, song.author.length - 8),
-      album: splitDescription(song.description)[4],
-      year: song.publishDate!.year,
+      title: music.title,
+      trackArtist: music.author.substring(0, music.author.length - 8),
+      album: splitDescription(music.description)[4],
+      year: music.publishDate!.year,
       pictures: [
         Picture(
           pictureType: PictureType.coverFront,
@@ -68,7 +68,7 @@ class Downloader {
     final manifest = await yt.videos.streamsClient.getManifest(id);
     StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
     var stream = yt.videos.streamsClient.get(streamInfo);
-    var tempWebm = File('$tempPath/${song.title}.webm');
+    var tempWebm = File('$tempPath/${music.title}.webm');
     var fileStream = tempWebm.openWrite();
     await stream.pipe(fileStream);
     await fileStream.flush();
@@ -77,15 +77,15 @@ class Downloader {
     // Close YouTubeExplode's http client
     yt.close();
 
-    // Convert webm to mp3
+    // Extract opus audio stream from webm file
     var command =
-        '-i "$tempPath/${song.title}.webm" -c:a libmp3lame -b:a 128k "$downloadPath/${song.title}.mp3"';
-    FFmpegKit.execute(command).then((session) async {
-      // Apply audio tags
-      AudioTags.write('$downloadPath/${song.title}.mp3', tag);
+        '-i "$tempPath/${music.title}.webm" -vn -c:a copy "$downloadPath/${music.title}.opus"';
+    await FFmpegKit.execute(command);
 
-      // Refresh storage media
-      MediaScanner.loadMedia(path: downloadPath);
-    });
+    // Apply audio tags
+    await AudioTags.write('$downloadPath/${music.title}.opus', tag);
+
+    // Refresh storage media
+    await MediaScanner.loadMedia(path: 'downloadPath/${music.title}.opus');
   }
 }
