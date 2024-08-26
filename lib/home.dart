@@ -28,9 +28,9 @@ class _HomeState extends State<Home> {
   }
 
   void startDownload(String link) async {
+    _linkController.clear();
     await downloader.download(link);
     refreshTags();
-    _linkController.clear();
   }
 
   @override
@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            _linkController.text = '';
+                            _linkController.clear();
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                         ),
