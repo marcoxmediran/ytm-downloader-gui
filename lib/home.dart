@@ -12,6 +12,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final downloader = Downloader();
+
   final TextEditingController _linkController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -35,9 +37,9 @@ class _HomeState extends State<Home> {
         .listen((List<SharedFile> value) {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(',');
-        if (Downloader.isValidLink(link)) {
+        if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          Downloader.download(Downloader.getId(link));
+          downloader.download(downloader.getId(link));
         }
       }
     });
@@ -47,9 +49,9 @@ class _HomeState extends State<Home> {
         .then((List<SharedFile> value) {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(",");
-        if (Downloader.isValidLink(link)) {
+        if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          Downloader.download(Downloader.getId(link));
+          downloader.download(downloader.getId(link));
         }
       }
     });
@@ -65,10 +67,10 @@ class _HomeState extends State<Home> {
             child: const Icon(Icons.download_outlined),
             onPressed: () async {
               String link = _linkController.text;
-              if (Downloader.isValidLink(link)) {
-                String id = Downloader.getId(link);
+              if (downloader.isValidLink(link)) {
+                String id = downloader.getId(link);
                 if (!context.mounted) return;
-                Downloader.download(id);
+                downloader.download(id);
               }
             },
           ),
@@ -83,6 +85,7 @@ class _HomeState extends State<Home> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Form(
                     key: _formKey,

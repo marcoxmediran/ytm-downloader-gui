@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'home.dart';
+import 'package:ytm_downloader_gui/home.dart';
 
 void main() {
   runApp(const MyApp());

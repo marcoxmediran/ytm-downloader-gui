@@ -2,31 +2,41 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:audiotags/audiotags.dart';
-import 'package:http/http.dart' as http;
-import 'package:media_scanner/media_scanner.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:ffmpeg_kit_flutter_audio/ffmpeg_kit.dart';
+import 'package:http/http.dart' as http;
 import 'package:image/image.dart';
+import 'package:media_scanner/media_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class Downloader {
-  static bool isValidLink(String link) {
+
+  // Singleton pattern
+  static final Downloader _downloader = Downloader._internal();
+  factory Downloader() {
+    return _downloader;
+  }
+  Downloader._internal();
+
+  // Functions
+  bool isValidLink(String link) {
     return link.contains('music.youtube.com/watch?v=');
   }
 
-  static String getId(String link) {
+  String getId(String link) {
     final index = link.indexOf('=');
     return link.substring(index + 1, index + 12);
   }
 
-  static List<String> splitDescription(String description) {
+  List<String> splitDescription(String description) {
     LineSplitter ls = const LineSplitter();
     return ls.convert(description);
   }
 
-  static Future<void> download(String id) async {
+  Future<void> download(String id) async {
     // Check permissions and get temp path
     await Permission.manageExternalStorage.request().isGranted;
     Directory tempDir = await getTemporaryDirectory();
@@ -79,13 +89,13 @@ class Downloader {
 
     // Extract opus audio stream from webm file
     var command =
-        '-i "$tempPath/${music.title}.webm" -vn -c:a copy "$downloadPath/${music.title}.opus"';
+        '-i "$tempPath/${music.title}.webm" -vn -c:a copy -y "$downloadPath/${music.title}.opus"';
     await FFmpegKit.execute(command);
 
     // Apply audio tags
     await AudioTags.write('$downloadPath/${music.title}.opus', tag);
 
     // Refresh storage media
-    await MediaScanner.loadMedia(path: 'downloadPath/${music.title}.opus');
+    await MediaScanner.loadMedia(path: downloadPath);
   }
 }
