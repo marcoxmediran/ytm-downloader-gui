@@ -27,6 +27,12 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void startDownload(String link) async {
+    await downloader.download(link);
+    refreshTags();
+    _linkController.clear();
+  }
+
   @override
   void initState() {
     initSharingListener();
@@ -47,9 +53,7 @@ class _HomeState extends State<Home> {
         var link = value.map((f) => f.value).join(',');
         if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          await downloader.download(downloader.getId(link));
-          refreshTags();
-          _linkController.clear();
+          startDownload(link);
         }
       }
     });
@@ -61,9 +65,7 @@ class _HomeState extends State<Home> {
         var link = value.map((f) => f.value).join(",");
         if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          await downloader.download(downloader.getId(link));
-          refreshTags();
-          _linkController.clear();
+          startDownload(link);
         }
       }
     });
@@ -80,11 +82,7 @@ class _HomeState extends State<Home> {
             onPressed: () async {
               String link = _linkController.text;
               if (downloader.isValidLink(link)) {
-                String id = downloader.getId(link);
-                if (!context.mounted) return;
-                await downloader.download(id);
-                refreshTags();
-                _linkController.clear();
+                startDownload(link);
               }
             },
           ),

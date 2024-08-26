@@ -27,11 +27,6 @@ class Downloader {
     return link.contains('music.youtube.com/watch?v=');
   }
 
-  String getId(String link) {
-    final index = link.indexOf('=');
-    return link.substring(index + 1, index + 12);
-  }
-
   List<String> splitDescription(String description) {
     LineSplitter ls = const LineSplitter();
     return ls.convert(description);
@@ -75,12 +70,13 @@ class Downloader {
       ],
     );
     tags.insert(0, tag);
+    final fileName = '${tag.trackArtist} - ${tag.title}';
 
     // Download file
     final manifest = await yt.videos.streamsClient.getManifest(link);
     StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
     var stream = yt.videos.streamsClient.get(streamInfo);
-    var tempWebm = File('$tempPath/${music.title}.webm');
+    var tempWebm = File('$tempPath/$fileName.webm');
     var fileStream = tempWebm.openWrite();
     await stream.pipe(fileStream);
     await fileStream.flush();
@@ -91,11 +87,11 @@ class Downloader {
 
     // Extract opus audio stream from webm file
     var command =
-        '-i "$tempPath/${music.title}.webm" -vn -c:a copy -y "$downloadPath/${music.title}.opus"';
+        '-i "$tempPath/$fileName.webm" -vn -c:a copy -y "$downloadPath/$fileName.opus"';
     await FFmpegKit.execute(command);
 
     // Apply audio tags
-    await AudioTags.write('$downloadPath/${music.title}.opus', tag);
+    await AudioTags.write('$downloadPath/$fileName.opus', tag);
 
     // Refresh storage media
     await MediaScanner.loadMedia(path: downloadPath);
