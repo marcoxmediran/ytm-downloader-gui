@@ -114,7 +114,16 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   const SizedBox(height: 32.0),
-                  const Text('Recent Downloads'),
+                  const Row(
+                    children: [
+                      Text('Recent Downloads'),
+                      SizedBox(width: 4),
+                      Icon(
+                        Icons.history,
+                        size: 16,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
