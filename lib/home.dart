@@ -104,6 +104,8 @@ class _HomeState extends State<Home> {
                     key: _formKey,
                     child: TextFormField(
                       controller: _linkController,
+                      maxLines: null,
+                      keyboardType: TextInputType.text,
                       onFieldSubmitted: (value) {
                         var link = value;
                         if (downloader.isValidLink(link)) {
@@ -115,7 +117,10 @@ class _HomeState extends State<Home> {
                         label: const Text('Music Link'),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: () => _linkController.text = '',
+                          onPressed: () {
+                            _linkController.text = '';
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
                         ),
                       ),
                     ),
