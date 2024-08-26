@@ -13,7 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class Downloader {
-
   // Singleton pattern
   static final Downloader _downloader = Downloader._internal();
   factory Downloader() {
@@ -21,7 +20,7 @@ class Downloader {
   }
   Downloader._internal();
   var tags = <Tag>[];
-  
+
   // Functions
   bool isValidLink(String link) {
     return link.contains('music.youtube.com/watch?v=');

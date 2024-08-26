@@ -80,6 +80,7 @@ class _HomeState extends State<Home> {
           FloatingActionButton(
             child: const Icon(Icons.download),
             onPressed: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
               String link = _linkController.text;
               if (downloader.isValidLink(link)) {
                 startDownload(link);
@@ -103,6 +104,12 @@ class _HomeState extends State<Home> {
                     key: _formKey,
                     child: TextFormField(
                       controller: _linkController,
+                      onFieldSubmitted: (value) {
+                        var link = value;
+                        if (downloader.isValidLink(link)) {
+                          startDownload(link);
+                        }
+                      },
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         label: const Text('Music Link'),
@@ -137,6 +144,7 @@ class _HomeState extends State<Home> {
                 ),
                 title: Text(tags[index].title.toString()),
                 subtitle: Text(tags[index].trackArtist.toString()),
+                onTap: () {},
               );
             },
           ),
