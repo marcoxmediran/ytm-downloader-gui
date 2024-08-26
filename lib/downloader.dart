@@ -20,7 +20,8 @@ class Downloader {
     return _downloader;
   }
   Downloader._internal();
-
+  var tags = <Tag>[];
+  
   // Functions
   bool isValidLink(String link) {
     return link.contains('music.youtube.com/watch?v=');
@@ -36,7 +37,7 @@ class Downloader {
     return ls.convert(description);
   }
 
-  Future<void> download(String id) async {
+  Future<void> download(String link) async {
     // Check permissions and get temp path
     await Permission.manageExternalStorage.request().isGranted;
     Directory tempDir = await getTemporaryDirectory();
@@ -45,7 +46,7 @@ class Downloader {
 
     // Get audio details
     final yt = YoutubeExplode();
-    final music = await yt.videos.get(id);
+    final music = await yt.videos.get(link);
 
     // Get album art
     final thumbnailUrl = music.thumbnails.maxResUrl;
@@ -73,9 +74,10 @@ class Downloader {
         ),
       ],
     );
+    tags.insert(0, tag);
 
     // Download file
-    final manifest = await yt.videos.streamsClient.getManifest(id);
+    final manifest = await yt.videos.streamsClient.getManifest(link);
     StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
     var stream = yt.videos.streamsClient.get(streamInfo);
     var tempWebm = File('$tempPath/${music.title}.webm');

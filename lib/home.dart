@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audiotags/audiotags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:ytm_downloader_gui/downloader.dart';
@@ -13,11 +14,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final downloader = Downloader();
+  var tags = <Tag>[];
 
   final TextEditingController _linkController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   late StreamSubscription _intentDataStreamSubscription;
+
+  void refreshTags() {
+    setState(() {
+      tags = downloader.tags;
+    });
+  }
 
   @override
   void initState() {
@@ -34,24 +42,28 @@ class _HomeState extends State<Home> {
   initSharingListener() {
     _intentDataStreamSubscription = FlutterSharingIntent.instance
         .getMediaStream()
-        .listen((List<SharedFile> value) {
+        .listen((List<SharedFile> value) async {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(',');
         if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          downloader.download(downloader.getId(link));
+          await downloader.download(downloader.getId(link));
+          refreshTags();
+          _linkController.clear();
         }
       }
     });
 
     FlutterSharingIntent.instance
         .getInitialSharing()
-        .then((List<SharedFile> value) {
+        .then((List<SharedFile> value) async {
       if (value.isNotEmpty) {
         var link = value.map((f) => f.value).join(",");
         if (downloader.isValidLink(link)) {
           _linkController.text = link;
-          downloader.download(downloader.getId(link));
+          await downloader.download(downloader.getId(link));
+          refreshTags();
+          _linkController.clear();
         }
       }
     });
@@ -70,7 +82,9 @@ class _HomeState extends State<Home> {
               if (downloader.isValidLink(link)) {
                 String id = downloader.getId(link);
                 if (!context.mounted) return;
-                downloader.download(id);
+                await downloader.download(id);
+                refreshTags();
+                _linkController.clear();
               }
             },
           ),
@@ -101,9 +115,23 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 32.0),
+                  const Text('Recent Downloads'),
                 ],
               ),
             ),
+          ),
+          SliverList.builder(
+            itemCount: tags.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: Image.memory(
+                  tags[index].pictures[0].bytes,
+                ),
+                title: Text(tags[index].title.toString()),
+                subtitle: Text(tags[index].trackArtist.toString()),
+              );
+            },
           ),
         ],
       ),
