@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            child: const Icon(Icons.download_outlined),
+            child: const Icon(Icons.download),
             onPressed: () async {
               String link = _linkController.text;
               if (downloader.isValidLink(link)) {
