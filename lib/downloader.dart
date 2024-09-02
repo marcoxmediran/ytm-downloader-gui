@@ -69,7 +69,7 @@ class Downloader {
       ],
     );
     tags.insert(0, tag);
-    final fileName = '${tag.trackArtist} - ${tag.title}';
+    final fileName = '${tag.title} - ${tag.trackArtist}';
 
     // Download file
     final manifest = await yt.videos.streamsClient.getManifest(link);
