@@ -41,9 +41,10 @@ class Downloader {
     // Get audio details
     final yt = YoutubeExplode();
     final music = await yt.videos.get(link);
+    final id = music.id;
 
     // Get album art
-    final thumbnailUrl = music.thumbnails.maxResUrl;
+    final thumbnailUrl = 'https://img.youtube.com/vi/$id/maxresdefault.jpg';
     final http.Response response = await http.get(Uri.parse(thumbnailUrl));
     final originalImage = response.bodyBytes;
     final decodedImage = decodeImage(originalImage);
@@ -69,13 +70,12 @@ class Downloader {
       ],
     );
     tags.insert(0, tag);
-    final fileName = '${tag.title} - ${tag.trackArtist}';
 
     // Download file
-    final manifest = await yt.videos.streamsClient.getManifest(link);
-    StreamInfo streamInfo = manifest.audioOnly.withHighestBitrate();
+    final manifest = await yt.videos.streamsClient.getManifest(id);
+    StreamInfo streamInfo = manifest.audioOnly.last;
     var stream = yt.videos.streamsClient.get(streamInfo);
-    var tempWebm = File('$tempPath/$fileName.webm');
+    var tempWebm = File('$tempPath/$id.webm');
     var fileStream = tempWebm.openWrite();
     await stream.pipe(fileStream);
     await fileStream.flush();
@@ -86,11 +86,19 @@ class Downloader {
 
     // Extract opus audio stream from webm file
     var command =
-        '-i "$tempPath/$fileName.webm" -vn -c:a copy -y "$downloadPath/$fileName.opus"';
+        '-i "$tempPath/$id.webm" -vn -c:a copy -y "$tempPath/$id.opus"';
     await FFmpegKit.execute(command);
 
     // Apply audio tags
-    await AudioTags.write('$downloadPath/$fileName.opus', tag);
+    await AudioTags.write('$tempPath/$id.opus', tag);
+
+    // Copy and rename file
+    final fileName = '${tag.title} - ${tag.trackArtist}'.replaceAll(RegExp('[^A-Za-z0-9 _-]'), '_');
+    await File('$tempPath/$id.opus').copy('$downloadPath/$fileName.opus');
+
+    // File cleanup
+    await File('$tempPath/$id.opus').delete();
+    await File('$tempPath/$id.webm').delete();
 
     // Refresh storage media
     await MediaScanner.loadMedia(path: downloadPath);
