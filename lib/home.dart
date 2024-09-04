@@ -74,20 +74,15 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            child: const Icon(Icons.download),
-            onPressed: () async {
-              FocusManager.instance.primaryFocus?.unfocus();
-              String link = _linkController.text;
-              if (downloader.isValidLink(link)) {
-                startDownload(link);
-              }
-            },
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.download),
+        onPressed: () async {
+          FocusManager.instance.primaryFocus?.unfocus();
+          String link = _linkController.text;
+          if (downloader.isValidLink(link)) {
+            startDownload(link);
+          }
+        },
       ),
       body: CustomScrollView(
         slivers: [
