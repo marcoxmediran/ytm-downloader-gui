@@ -104,7 +104,7 @@ class Downloader {
 
     // Copy and rename file
     final fileName = '${tag.title} - ${tag.trackArtist}'
-        .replaceAll(RegExp('[^A-Za-z0-9 _-]'), '_');
+        .replaceAll(RegExp(r'''[:/'"*<>?\|]'''), '_');
     await File('$tempPath/$id.opus').copy('$downloadPath/$fileName.opus');
 
     // File cleanup
