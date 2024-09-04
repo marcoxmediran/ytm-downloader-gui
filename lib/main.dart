@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:ytm_downloader_gui/home.dart';
+import 'package:ytm_downloader_gui/globals.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         return MaterialApp(
-          debugShowCheckedModeBanner: false,
+          scaffoldMessengerKey: Globals.scaffoldMessengerKey,
           title: 'ytm_downloader_gui',
           theme: ThemeData(
             colorScheme: lightDynamic ??
