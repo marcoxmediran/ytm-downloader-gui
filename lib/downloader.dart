@@ -62,7 +62,7 @@ class Downloader {
     // Generate audio tags
     Tag tag = Tag(
       title: music.title,
-      trackArtist: music.author.substring(0, music.author.length - 8),
+      trackArtist: music.author.replaceAll(' - Topic', ''),
       album: splitDescription(music.description)[4],
       year: music.publishDate!.year,
       pictures: [
