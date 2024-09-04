@@ -5,12 +5,15 @@ import 'dart:typed_data';
 
 import 'package:audiotags/audiotags.dart';
 import 'package:ffmpeg_kit_flutter_audio/ffmpeg_kit.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart';
 import 'package:media_scanner/media_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+
+import 'package:ytm_downloader_gui/globals.dart';
 
 class Downloader {
   // Singleton pattern
@@ -71,6 +74,13 @@ class Downloader {
     );
     tags.insert(0, tag);
 
+    // Notify start of download
+    final snackBar = SnackBar(
+      content: Text('Downloading ${tag.title}'),
+      behavior: SnackBarBehavior.floating,
+    );
+    Globals.scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+
     // Download file
     final manifest = await yt.videos.streamsClient.getManifest(id);
     StreamInfo streamInfo = manifest.audioOnly.last;
@@ -93,7 +103,8 @@ class Downloader {
     await AudioTags.write('$tempPath/$id.opus', tag);
 
     // Copy and rename file
-    final fileName = '${tag.title} - ${tag.trackArtist}'.replaceAll(RegExp('[^A-Za-z0-9 _-]'), '_');
+    final fileName = '${tag.title} - ${tag.trackArtist}'
+        .replaceAll(RegExp('[^A-Za-z0-9 _-]'), '_');
     await File('$tempPath/$id.opus').copy('$downloadPath/$fileName.opus');
 
     // File cleanup
