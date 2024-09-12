@@ -45,6 +45,7 @@ class Downloader {
     final yt = YoutubeExplode();
     final music = await yt.videos.get(link);
     final id = music.id;
+    final description = splitDescription(music.description);
 
     // Get album art
     final thumbnailUrl = 'https://img.youtube.com/vi/$id/maxresdefault.jpg';
@@ -63,7 +64,7 @@ class Downloader {
     Tag tag = Tag(
       title: music.title,
       trackArtist: music.author.replaceAll(' - Topic', ''),
-      album: splitDescription(music.description)[4],
+      album: (description.length >= 4) ? description[4] : music.title,
       year: music.publishDate!.year,
       pictures: [
         Picture(
