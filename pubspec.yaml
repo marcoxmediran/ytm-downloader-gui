@@ -33,7 +33,7 @@ dependencies:
 
 
   dynamic_color: ^1.6.7
-  youtube_explode_dart: ^2.0.2
+  youtube_explode_dart: ^2.2.2
   permission_handler: ^11.0.0
   ffmpeg_kit_flutter_audio: ^6.0.3
   http: ^1.1.0
