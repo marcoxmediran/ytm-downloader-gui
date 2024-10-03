@@ -86,7 +86,7 @@ class Downloader {
     final manifest = await yt.videos.streamsClient.getManifest(id);
     StreamInfo streamInfo = manifest.audioOnly.last;
     var stream = yt.videos.streamsClient.get(streamInfo);
-    var tempWebm = File('$downloadPath/$id.webm');
+    var tempWebm = File('$tempPath/$id.webm');
     var fileStream = tempWebm.openWrite();
     await stream.pipe(fileStream);
     await fileStream.flush();
@@ -97,7 +97,7 @@ class Downloader {
 
     // Extract opus audio stream from webm file
     var command =
-        '-i "$downloadPath/$id.webm" -vn -c:a copy -y "$downloadPath/$id.opus"';
+        '-i "$tempPath/$id.webm" -vn -c:a copy -y "$tempPath/$id.opus"';
     await FFmpegKit.execute(command);
 
     // Apply audio tags
@@ -106,11 +106,11 @@ class Downloader {
     // Copy and rename file
     final fileName = '${tag.title} - ${tag.trackArtist}'
         .replaceAll(RegExp(r'''[:/'"*<>?\|]'''), '_');
-    await File('$downloadPath/$id.opus').copy('$downloadPath/$fileName.opus');
+    await File('$tempPath/$id.opus').copy('$downloadPath/$fileName.opus');
 
     // File cleanup
-    await File('$downloadPath/$id.opus').delete();
-    await File('$downloadPath/$id.webm').delete();
+    await File('$tempPath/$id.opus').delete();
+    await File('$tempPath/$id.webm').delete();
 
     // Refresh storage media
     await MediaScanner.loadMedia(path: downloadPath);
